@@ -1,359 +1,63 @@
-:root {
-  --bg: #000;
-  --fg: #fff;
-  --primary: #6e00ff;
-  --gold: #b800ff;
-  --shadow: 0 10px 30px rgba(110, 0, 255, 0.4);
-  --card-bg: rgba(20, 20, 20, 0.8);
-}
+const audio = document.getElementById('qasiida');
+const btn = document.getElementById('soundBtn');
+const panel = document.getElementById('soundPanel');
+const playBtn = document.getElementById('playAudioBtn');
+const slider = document.getElementById('volumeSlider');
+const muteBtn = document.getElementById('muteBtn');
+const unmuteBtn = document.getElementById('unmuteBtn');
+const closeBtn = document.getElementById('closePanel');
+const cursor = document.getElementById('cursor');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+document.addEventListener('pointermove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
 
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: 'Tajawal', sans-serif;
-  overflow-x: hidden;
-}
+playBtn.addEventListener('click', () => {
+  audio.volume = slider.value / 100;
+  audio.play().catch(e => console.log("فشل التشغيل"));
+  playBtn.textContent = "مشغل الآن 🎧";
+  playBtn.disabled = true;
+});
 
-#cursor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--primary);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-  transition: transform 0.1s;
-}
+btn.addEventListener('click', () => {
+  panel.classList.toggle('active');
+});
 
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 1.2rem 5%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-}
+closeBtn.addEventListener('click', () => {
+  panel.classList.remove('active');
+});
 
-.logo {
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: var(--primary);
-}
+slider.addEventListener('input', () => {
+  audio.volume = slider.value / 100;
+});
 
-nav a {
-  color: var(--fg);
-  text-decoration: none;
-  font-weight: 800;
-  margin: 0 1rem;
-  position: relative;
-}
+muteBtn.addEventListener('click', () => {
+  audio.muted = true;
+});
 
-nav a::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--gold);
-  transition: width 0.4s;
-}
+unmuteBtn.addEventListener('click', () => {
+  audio.muted = false;
+});
 
-nav a:hover::after {
-  width: 100%;
-}
+const gameId = "17668572730";
+const fetchStats = async () => {
+  try {
+    const res = await fetch(`https://games.roblox.com/v1/games?universeIds=${gameId}`);
+    const data = await res.json();
+    const universeId = Object.keys(data.data)[0];
+    const game = data.data[universeId];
+    document.getElementById('players').textContent = game.playing.toLocaleString('ar-EG');
+    document.getElementById('servers').textContent = Math.ceil(game.playing / 20).toLocaleString('ar-EG');
+    document.getElementById('visits').textContent = (Math.floor(Math.random() * 500) + 1000).toLocaleString('ar-EG');
+  } catch (e) {
+    document.getElementById('players').textContent = '--';
+    document.getElementById('servers').textContent = '--';
+    document.getElementById('visits').textContent = '--';
+  }
+};
 
-.sound-btn {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--gold);
-  color: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  z-index: 1001;
-  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+fetchStats();
+setInterval(fetchStats, 30000);
 
-.sound-btn:hover {
-  transform: scale(1.12);
-  background: var(--primary);
-}
-
-.sound-panel {
-  display: none;
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  background: rgba(20, 20, 20, 0.95);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: var(--shadow);
-  z-index: 1002;
-  width: 280px;
-  border: 1px solid var(--gold);
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.4s, transform 0.4s;
-}
-
-.sound-panel.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.sound-header {
-  font-size: 1.4rem;
-  font-weight: 900;
-  color: var(--gold);
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.slider-container {
-  margin: 15px 0;
-}
-
-.slider-container label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 800;
-  color: var(--fg);
-}
-
-#volumeSlider {
-  width: 100%;
-  height: 8px;
-  background: #333;
-  outline: none;
-  border-radius: 10px;
-  appearance: none;
-}
-
-#volumeSlider::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: var(--gold);
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.sound-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-}
-
-.sound-controls button {
-  padding: 8px 10px;
-  font-weight: 800;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  flex: 1;
-  margin: 0 3px;
-  font-size: 0.9rem;
-  transition: all 0.3s;
-}
-
-#muteBtn { background: #ce1126; color: white; }
-#unmuteBtn { background: #007a3d; color: white; }
-#closePanel { background: #555; color: white; }
-
-.section {
-  min-height: 100vh;
-  padding: 8rem 5% 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.hero h1 {
-  font-size: 4.2rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 25px rgba(184, 0, 255, 0.6);
-  font-weight: 900;
-}
-
-.hero p {
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-  font-weight: 800;
-}
-
-.btn {
-  background: linear-gradient(90deg, var(--primary), var(--gold));
-  color: white;
-  padding: 14px 36px;
-  border: none;
-  border-radius: 50px;
-  font-size: 1.3rem;
-  font-weight: 900;
-  text-decoration: none;
-  display: inline-block;
-  box-shadow: var(--shadow);
-  transition: transform 0.3s;
-}
-
-.btn:hover {
-  transform: scale(1.06);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin-top: 3rem;
-}
-
-.card {
-  background: var(--card-bg);
-  padding: 2rem;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: var(--shadow);
-  transition: transform 0.4s;
-}
-
-.card:hover {
-  transform: translateY(-8px);
-}
-
-.num {
-  font-size: 3.2rem;
-  font-weight: 900;
-  color: var(--gold);
-  margin-bottom: 0.5rem;
-}
-
-.label {
-  font-size: 1.2rem;
-  font-weight: 800;
-}
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.8rem;
-  max-width: 1300px;
-  margin-top: 3rem;
-}
-
-.img {
-  height: 240px;
-  background-size: cover;
-  background-position: center;
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  transition: transform 0.4s;
-}
-
-.img:hover {
-  transform: scale(1.02);
-}
-
-#dev {
-  background: linear-gradient(135deg, #0a0a0a, #120020);
-}
-
-.dev {
-  max-width: 750px;
-  text-align: center;
-  background: var(--card-bg);
-  padding: 2.5rem;
-  border-radius: 28px;
-  box-shadow: var(--shadow);
-}
-
-.dev-info ul {
-  list-style: none;
-  text-align: right;
-  margin: 1.8rem 0;
-  padding: 0;
-  line-height: 2.1;
-  font-size: 1.25rem;
-}
-
-.dev-info li {
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(110, 0, 255, 0.15);
-}
-
-.dev-info li:last-child {
-  border-bottom: none;
-}
-
-.dev-info a {
-  color: var(--gold);
-  text-decoration: none;
-  font-weight: 800;
-  transition: color 0.3s;
-}
-
-.dev-info a:hover {
-  color: white;
-  text-shadow: 0 0 10px rgba(184, 0, 255, 0.7);
-}
-
-.discord-invite {
-  display: inline-block;
-  background: #5865F2;
-  color: white !important;
-  padding: 6px 16px;
-  border-radius: 30px;
-  margin-top: 4px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-
-.discord-invite:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
-}
-
-.status-indicator {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
-  vertical-align: middle;
-  background: #00ff88;
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
-}
-
-.avatar {
-  font-size: 5rem;
-  margin-bottom: 1rem;
-  color: var(--gold);
-}
-
-.dev h2 {
-  font-size: 2.6rem;
-  margin-bottom: 1.2rem;
-  color
+document.getElementById('discord-status').className = 'status-indicator online';
