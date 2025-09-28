@@ -36,8 +36,4 @@ const fetchStats = async () => {
 fetchStats();
 setInterval(fetchStats, 30000);
 
-// حالة ديسكورد — نضعها أخضر دائمًا (لأن السيرفر شغال)
-document.getElementById('discord-status').className = 'status-indicator';
-setTimeout(() => {
-  document.getElementById('discord-status').className = 'status-indicator online';
-}, 300);
+document.getElementById('discord-status').className = 'status-indicator online';
