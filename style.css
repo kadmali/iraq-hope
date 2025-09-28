@@ -359,4 +359,64 @@ nav a:hover::after {
   display: inline-block;
   width: 12px;
   height: 12px;
- 
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: #00ff88;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+}
+
+.avatar {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  color: var(--gold);
+}
+
+.dev h2 {
+  font-size: 2.6rem;
+  margin-bottom: 1.2rem;
+  color: var(--gold);
+}
+
+.quote {
+  font-size: 1.45rem;
+  font-style: italic;
+  color: var(--gold);
+  margin-top: 1.8rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(110, 0, 255, 0.3);
+}
+
+.big-btn {
+  font-size: 1.8rem;
+  padding: 20px 50px;
+  margin-top: 2rem;
+  background: linear-gradient(90deg, var(--primary), var(--gold));
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  box-shadow: var(--shadow);
+  display: inline-block;
+  transition: transform 0.3s;
+}
+
+.big-btn:hover {
+  transform: scale(1.04);
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(0,0,0,0.85);
+  margin-top: 4rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.7rem; }
+  .hero p { font-size: 1.25rem; }
+  .num { font-size: 2.6rem; }
+  .dev h2 { font-size: 2.1rem; }
+  .big-btn { font-size: 1.5rem; padding: 16px 40px; }
+}
