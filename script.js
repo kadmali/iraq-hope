@@ -45,15 +45,20 @@ const fetchStats = async () => {
   try {
     const res = await fetch(`https://games.roblox.com/v1/games?universeIds=${gameId}`);
     const data = await res.json();
-    const universeId = Object.keys(data.data)[0];
-    const game = data.data[universeId];
-    document.getElementById('players').textContent = game.playing.toLocaleString('ar-EG');
-    document.getElementById('servers').textContent = Math.ceil(game.playing / 20).toLocaleString('ar-EG');
-    document.getElementById('visits').textContent = (Math.floor(Math.random() * 500) + 1000).toLocaleString('ar-EG');
+    
+    if (!data.data || !data.data[gameId]) {
+      throw new Error("No data");
+    }
+
+    const players = data.data[gameId].playing;
+    document.getElementById('players').textContent = players.toLocaleString('ar-EG');
+
+    const visits = Math.max(800, Math.floor(players * 1.8));
+    document.getElementById('visits').textContent = visits.toLocaleString('ar-EG');
+
   } catch (e) {
-    document.getElementById('players').textContent = '--';
-    document.getElementById('servers').textContent = '--';
-    document.getElementById('visits').textContent = '--';
+    document.getElementById('players').textContent = '---';
+    document.getElementById('visits').textContent = '---';
   }
 };
 
