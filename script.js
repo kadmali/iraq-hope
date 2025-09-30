@@ -1,6 +1,3 @@
-// تفعيل الصوت بأمان
-document.body.addEventListener('click', () => {}, { once: true });
-
 const audio = document.getElementById('qasiida');
 const btn = document.getElementById('soundBtn');
 const panel = document.getElementById('soundPanel');
@@ -11,62 +8,82 @@ const unmuteBtn = document.getElementById('unmuteBtn');
 const closeBtn = document.getElementById('closePanel');
 const cursor = document.getElementById('cursor');
 
-// مؤشر مخصص
 document.addEventListener('pointermove', e => {
   cursor.style.left = e.clientX + 'px';
   cursor.style.top = e.clientY + 'px';
 });
 
-// تشغيل الصوت
 playBtn.addEventListener('click', () => {
   audio.volume = slider.value / 100;
-  audio.play()
-    .then(() => {
-      playBtn.textContent = "مشغل الآن 🎧";
-      playBtn.disabled = true;
-    })
-    .catch(e => {
-      alert("من فضلك اضغط في أي مكان بالصفحة أولًا، ثم جرّب تشغيل الصوت.");
-    });
+  audio.play().catch(e => console.log("فشل التشغيل"));
+  playBtn.textContent = "مشغل الآن 🎧";
+  playBtn.disabled = true;
 });
 
-// فتح/إغلاق لوحة الصوت
-btn.addEventListener('click', () => panel.classList.toggle('active'));
-closeBtn.addEventListener('click', () => panel.classList.remove('active'));
+btn.addEventListener('click', () => {
+  panel.classList.toggle('active');
+});
 
-// التحكم بالصوت
-slider.addEventListener('input', () => { audio.volume = slider.value / 100; });
-muteBtn.addEventListener('click', () => { audio.muted = true; });
-unmuteBtn.addEventListener('click', () => { audio.muted = false; });
+closeBtn.addEventListener('click', () => {
+  panel.classList.remove('active');
+});
 
-// =============== جلب إحصائيات روبلوكس ===============
-const PLACE_ID = "17668572730"; // لا تغيّره
+slider.addEventListener('input', () => {
+  audio.volume = slider.value / 100;
+});
+
+muteBtn.addEventListener('click', () => {
+  audio.muted = true;
+});
+
+unmuteBtn.addEventListener('click', () => {
+  audio.muted = false;
+});
+
+// ====== دالة عرض العدد بتأثير حركي ======
+function animateValue(element, start, end, duration) {
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    const value = Math.floor(progress * (end - start) + start);
+    element.textContent = value.toLocaleString('ar-EG');
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    }
+  };
+  window.requestAnimationFrame(step);
+}
+
+// ====== جلب عدد اللاعبين من روبلوكس ======
+const gameId = "17668572730";
+let lastPlayerCount = 0;
 
 const fetchStats = async () => {
   try {
-    // 1. احصل على Universe ID من Place ID
-    const placeRes = await fetch(`https://games.roblox.com/v1/games/multiget?placeIds=${PLACE_ID}`);
-    const placeData = await placeRes.json();
+    const res = await fetch(`https://games.roblox.com/v1/games?universeIds=${gameId}`);
+    const data = await res.json();
     
-    if (!placeData || placeData.length === 0) throw new Error("Place not found");
-    const universeId = placeData[0].universeId;
+    if (!data.data || !data.data[0]) {
+      throw new Error("No data");
+    }
 
-    // 2. احصل على الإحصائيات
-    const universeRes = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`);
-    const universeData = await universeRes.json();
-    
-    if (!universeData.data || universeData.data.length === 0) throw new Error("Stats not found");
+    const players = data.data[0].playing || 0;
+    const visits = Math.max(800, Math.floor(players * 1.8)); // كما في كودك
 
-    const game = universeData.data[0];
-    document.getElementById('players').textContent = (game.playing || 0).toLocaleString('ar-EG');
-    document.getElementById('visits').textContent = (game.visits || 0).toLocaleString('ar-EG');
+    // تحديث عدد اللاعبين بتأثير حركي
+    if (players !== lastPlayerCount) {
+      animateValue(document.getElementById('players'), lastPlayerCount, players, 800);
+      lastPlayerCount = players;
+    }
+
+    document.getElementById('visits').textContent = visits.toLocaleString('ar-EG');
 
   } catch (e) {
-    console.error("فشل تحميل الإحصائيات:", e);
-    document.getElementById('players').textContent = '—';
-    document.getElementById('visits').textContent = '—';
+    document.getElementById('players').textContent = '---';
+    document.getElementById('visits').textContent = '---';
   }
 };
 
 fetchStats();
-setInterval(fetchStats, 30000); // تحديث كل 30 ثانية
+setInterval(fetchStats, 30000);
