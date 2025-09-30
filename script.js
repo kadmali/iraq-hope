@@ -40,50 +40,55 @@ unmuteBtn.addEventListener('click', () => {
   audio.muted = false;
 });
 
-// ====== دالة عرض العدد بتأثير حركي ======
-function animateValue(element, start, end, duration) {
-  let startTimestamp = null;
+function animateValue(element, start, end, duration = 800) {
+  let startTime = null;
   const step = (timestamp) => {
-    if (!startTimestamp) startTimestamp = timestamp;
-    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
     const value = Math.floor(progress * (end - start) + start);
     element.textContent = value.toLocaleString('ar-EG');
     if (progress < 1) {
-      window.requestAnimationFrame(step);
+      requestAnimationFrame(step);
     }
   };
-  window.requestAnimationFrame(step);
+  requestAnimationFrame(step);
 }
 
-// ====== جلب عدد اللاعبين من روبلوكس ======
-const gameId = "17668572730";
-let lastPlayerCount = 0;
+const PLACE_ID = "17668572730";
+let currentPlayers = 0;
 
-const fetchStats = async () => {
+const fetchPlayers = async () => {
   try {
-    const res = await fetch(`https://games.roblox.com/v1/games?universeIds=${gameId}`);
-    const data = await res.json();
-    
-    if (!data.data || !data.data[0]) {
-      throw new Error("No data");
+    const placeRes = await fetch(`https://games.roblox.com/v1/games/multiget?placeIds=${PLACE_ID}`);
+    const placeData = await placeRes.json();
+
+    if (!placeData || placeData.length === 0 || !placeData[0].universeId) {
+      throw new Error("Place not found");
     }
 
-    const players = data.data[0].playing || 0;
-    const visits = Math.max(800, Math.floor(players * 1.8)); // كما في كودك
+    const universeId = placeData[0].universeId;
+    const gameRes = await fetch(`https://games.roblox.com/v1/games?universeIds=${universeId}`);
+    const gameData = await gameRes.json();
 
-    // تحديث عدد اللاعبين بتأثير حركي
-    if (players !== lastPlayerCount) {
-      animateValue(document.getElementById('players'), lastPlayerCount, players, 800);
-      lastPlayerCount = players;
+    if (!gameData.data || gameData.data.length === 0) {
+      throw new Error("Game data not found");
+    }
+
+    const players = gameData.data[0].playing || 0;
+    const visits = Math.max(800, Math.floor(players * 1.8));
+
+    if (players !== currentPlayers) {
+      animateValue(document.getElementById('players'), currentPlayers, players, 900);
+      currentPlayers = players;
     }
 
     document.getElementById('visits').textContent = visits.toLocaleString('ar-EG');
 
-  } catch (e) {
-    document.getElementById('players').textContent = '---';
-    document.getElementById('visits').textContent = '---';
+  } catch (err) {
+    document.getElementById('players').textContent = '—';
+    document.getElementById('visits').textContent = '—';
   }
 };
 
-fetchStats();
-setInterval(fetchStats, 30000);
+fetchPlayers();
+setInterval(fetchPlayers, 25000);
