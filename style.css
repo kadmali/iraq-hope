@@ -222,6 +222,13 @@ nav a:hover::after {
   font-weight: 800;
 }
 
+.main-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
 .btn {
   background: linear-gradient(90deg, var(--primary), var(--gold));
   color: white;
@@ -238,6 +245,13 @@ nav a:hover::after {
 
 .btn:hover {
   transform: scale(1.06);
+}
+
+.discord-main {
+  background: linear-gradient(90deg, #5865F2, #7289DA) !important;
+  font-size: 1.25rem;
+  padding: 12px 30px;
+  text-align: center;
 }
 
 .grid {
@@ -387,23 +401,6 @@ nav a:hover::after {
   border-top: 1px solid rgba(110, 0, 255, 0.3);
 }
 
-.big-btn {
-  font-size: 1.8rem;
-  padding: 20px 50px;
-  margin-top: 2rem;
-  background: linear-gradient(90deg, var(--primary), var(--gold));
-  color: white;
-  text-decoration: none;
-  border-radius: 50px;
-  box-shadow: var(--shadow);
-  display: inline-block;
-  transition: transform 0.3s;
-}
-
-.big-btn:hover {
-  transform: scale(1.04);
-}
-
 footer {
   text-align: center;
   padding: 2rem;
@@ -418,5 +415,12 @@ footer {
   .hero p { font-size: 1.25rem; }
   .num { font-size: 2.6rem; }
   .dev h2 { font-size: 2.1rem; }
-  .big-btn { font-size: 1.5rem; padding: 16px 40px; }
+  .main-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  .btn {
+    width: 90%;
+    max-width: 300px;
+  }
 }
