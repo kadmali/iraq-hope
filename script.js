@@ -65,4 +65,4 @@ const fetchStats = async () => {
 fetchStats();
 setInterval(fetchStats, 30000);
 
-document.getElementById('discord-status').className = 'status-indicator online';
+document.getElementById('discord-status')?.classList.add('online');
