@@ -18,6 +18,7 @@ body {
   color: var(--fg);
   font-family: 'Tajawal', sans-serif;
   overflow-x: hidden;
+  line-height: 1.6;
 }
 
 #cursor {
@@ -31,6 +32,7 @@ body {
   transform: translate(-50%, -50%);
   mix-blend-mode: difference;
   transition: transform 0.1s;
+  will-change: transform;
 }
 
 nav {
@@ -41,7 +43,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
   z-index: 1000;
 }
@@ -178,6 +180,15 @@ nav a:hover::after {
   cursor: pointer;
 }
 
+#volumeSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
 .sound-controls {
   display: flex;
   justify-content: space-between;
@@ -196,9 +207,20 @@ nav a:hover::after {
   transition: all 0.3s;
 }
 
-#muteBtn { background: #ce1126; color: white; }
-#unmuteBtn { background: #007a3d; color: white; }
-#closePanel { background: #555; color: white; }
+#muteBtn {
+  background: #ce1126;
+  color: white;
+}
+
+#unmuteBtn {
+  background: #007a3d;
+  color: white;
+}
+
+#closePanel {
+  background: #555;
+  color: white;
+}
 
 .section {
   min-height: 100vh;
@@ -220,6 +242,7 @@ nav a:hover::after {
   font-size: 1.5rem;
   margin-bottom: 2rem;
   font-weight: 800;
+  text-align: center;
 }
 
 .main-buttons {
@@ -241,6 +264,7 @@ nav a:hover::after {
   display: inline-block;
   box-shadow: var(--shadow);
   transition: transform 0.3s;
+  text-align: center;
 }
 
 .btn:hover {
@@ -352,18 +376,6 @@ nav a:hover::after {
   border-bottom: none;
 }
 
-.dev-info a {
-  color: var(--gold);
-  text-decoration: none;
-  font-weight: 800;
-  transition: color 0.3s;
-}
-
-.dev-info a:hover {
-  color: white;
-  text-shadow: 0 0 10px rgba(184, 0, 255, 0.7);
-}
-
 .avatar {
   font-size: 5rem;
   margin-bottom: 1rem;
@@ -388,26 +400,50 @@ nav a:hover::after {
 footer {
   text-align: center;
   padding: 2rem;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   margin-top: 4rem;
   font-weight: 800;
   letter-spacing: 1px;
 }
 
+/* تحسينات الجوال */
 @media (max-width: 768px) {
-  .hero h1 { font-size: 2.7rem; }
-  .hero p { font-size: 1.25rem; }
-  .num { font-size: 2.6rem; }
-  .dev h2 { font-size: 2.1rem; }
+  .hero h1 {
+    font-size: 2.7rem;
+  }
+
+  .hero p {
+    font-size: 1.25rem;
+  }
+
+  .num {
+    font-size: 2.6rem;
+  }
+
+  .dev h2 {
+    font-size: 2.1rem;
+  }
+
   .main-buttons {
     flex-direction: column;
     align-items: center;
   }
+
   .btn {
     width: 90%;
     max-width: 300px;
   }
+
   .discord-main {
     justify-content: center;
+  }
+
+  nav {
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    margin: 0.5rem;
+    font-size: 1rem;
   }
 }
